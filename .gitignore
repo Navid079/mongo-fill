@@ -1,0 +1,5 @@
+*.fake
+/node_modules
+*.dat
+test.js
+*.txt
