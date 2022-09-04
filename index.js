@@ -64,6 +64,32 @@ const randomString = (
   return randomString(len - 1, chars, s + char);
 };
 
+const calculateRelativeDate = rel => {
+  const [v, unit] = [rel.slice(0, -1), rel.slice(-1)];
+  const value = +v;
+  const transforms = [1000, 60, 60, 24];
+  const units = ["s", "m", "h", "d"];
+
+  const unitIndex = units.findIndex(item => item === unit);
+  let timestamp = +new Date();
+  let range = value;
+  for (let i = 0; i <= unitIndex; i++) {
+    range *= transforms[i];
+  }
+  timestamp += range;
+
+  return timestamp;
+};
+
+const getDate = (from, to) => {
+  const fromDate = calculateRelativeDate(from);
+  const toDate = calculateRelativeDate(to);
+
+  const randomTime = Math.floor(Math.random() * (toDate - fromDate)) + fromDate;
+
+  return new Date(randomTime);
+};
+
 const generateRandom = (type, min, max) => {
   const length = Math.floor(Math.random() * (max - min)) + +min;
 
@@ -123,6 +149,9 @@ const generateValue = async value => {
     const [type, range] = value.split("{");
     if (isRanged(range)) {
       const [min, max] = getRange(range);
+      if (type === "date") {
+        return getDate(min, max);
+      }
       return generateRandom(type, min, max);
     } else {
       const value = getValue(range);
